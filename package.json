@@ -1,5 +1,5 @@
 {
-  "name": "kraken",
+  "name": "kraken-extension",
   "private": true,
   "packageManager": "yarn@3.0.1",
   "authors": [
@@ -12,8 +12,8 @@
       "email": "maltor124@gmail.com"
     }
   ],
-  "bugs": "https://github.com/lunch-money/kraken/issues",
-  "homepage": "https://github.com/lunch-money/kraken#README",
+  "bugs": "https://github.com/lunch-money/kraken-extension/issues",
+  "homepage": "https://github.com/lunch-money/kraken-extension#README",
   "version": "1.0.0",
   "license": "MIT",
   "keywords": [
@@ -22,7 +22,7 @@
     "budgeting"
   ],
   "description": "A wrapper around the Kraken API for enabling Lunch Money to gather information about a user's account.",
-  "repository": "github:lunch-money/kraken",
+  "repository": "github:lunch-money/kraken-extension",
   "main": "./dist/main.js",
   "exports": {
     ".": "./dist/main.js"
@@ -41,6 +41,7 @@
     "postinstall": "husky install"
   },
   "devDependencies": {
+    "@types/qs": "^6",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "eslint": "^7.32.0",
@@ -58,5 +59,11 @@
     "*.{js,ts,tsx}": [
       "eslint --fix"
     ]
+  },
+  "dependencies": {
+    "@types/got": "^9.6.12",
+    "crypto": "^1.0.1",
+    "got": "^11.8.2",
+    "qs": "^6.10.1"
   }
 }
