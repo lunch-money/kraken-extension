@@ -1,0 +1,62 @@
+{
+  "name": "kraken",
+  "private": true,
+  "packageManager": "yarn@3.0.1",
+  "authors": [
+    {
+      "name": "Steven Steinrücken",
+      "email": "info@steven-steinruecken.de"
+    },
+    {
+      "name": "Max Dumas",
+      "email": "maltor124@gmail.com"
+    }
+  ],
+  "bugs": "https://github.com/lunch-money/kraken/issues",
+  "homepage": "https://github.com/lunch-money/kraken#README",
+  "version": "1.0.0",
+  "license": "MIT",
+  "keywords": [
+    "lunch money",
+    "kraken",
+    "budgeting"
+  ],
+  "description": "A wrapper around the Kraken API for enabling Lunch Money to gather information about a user's account.",
+  "repository": "github:lunch-money/kraken",
+  "main": "./dist/main.js",
+  "exports": {
+    ".": "./dist/main.js"
+  },
+  "typesVersions": {
+    "*": {
+      "main.d.ts": [
+        "dist/main.d.ts"
+      ]
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --fix",
+    "postinstall": "husky install"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/parser": "^4.29.2",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^7.0.0",
+    "lint-staged": "^11.1.2",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  },
+  "engines": {
+    "node": "^12.20.0 || ^14.17.1 || >=16.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix"
+    ]
+  }
+}
