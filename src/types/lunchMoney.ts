@@ -1,20 +1,19 @@
 /**
  * Serializable configuration for the connection
  */
-// TODO: Remove this if there isn't any shared config type between our
-// integrations that makes sense here.
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type LunchMoneyCryptoConnectionConfig = {};
+export type LunchMoneyCryptoConnectionConfig = {
+  cryptoAccountId: string | null;
+  apiKey: string;
+};
 
-/**
- * Non-serializable injected dependencies for the connection
- */
-// TODO: Remove this if there isn't any shared context type between our
-// integrations that makes sense here.
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type LunchMoneyCryptoConnectionContext = {};
+export type LunchMoneyCryptoConnectionContext = {
+  [key: string]: any;
+};
 
 export interface CryptoBalance {
+  type: 'crypto' | 'cash';
+  raw: string;
   asset: string;
   amount: string;
 }
@@ -33,7 +32,6 @@ export interface LunchMoneyCryptoConnection<
   TConfig extends LunchMoneyCryptoConnectionConfig,
   TContext extends LunchMoneyCryptoConnectionContext,
 > {
-  initiate(config: TConfig, context: TContext): Promise<LunchMoneyCryptoConnectionInitialization>;
-
-  getBalances(config: TConfig, context: TContext): Promise<LunchMoneyCryptoConnectionBalances>;
+  initiate(config: TConfig, context?: TContext): Promise<LunchMoneyCryptoConnectionInitialization>;
+  getBalances(config: TConfig, context?: TContext): Promise<LunchMoneyCryptoConnectionBalances>;
 }

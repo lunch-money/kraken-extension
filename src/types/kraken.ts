@@ -1,20 +1,21 @@
-export interface UnsafeKrakenResponse<T> {
-  error: string[] | null;
-  result: T | null;
+import { LunchMoneyCryptoConnectionConfig, LunchMoneyCryptoConnectionContext } from './lunchMoney.js';
+import KrakenAPI from '../api/krakenAPI.js';
+
+export interface LunchMoneyKrakenConnectionConfig extends LunchMoneyCryptoConnectionConfig {
+  apiSecret: string;
 }
 
-export interface SafeKrakenResponse<T> {
-  error: string[];
-  result: T;
+export interface LunchMoneyKrakenConnectionContext extends LunchMoneyCryptoConnectionContext {
+  kraken: KrakenAPI;
 }
 
-export interface KrakenResponse<T, C> {
-  response: T;
-  warnings: C | null;
+export interface KrakenResponse<T> {
+  error: string[] | null | undefined;
+  result: T | null | undefined;
 }
 
 export interface KrakenValidation<T, C> {
-  validated: T;
+  result: T;
   warnings: C | null;
 }
 
