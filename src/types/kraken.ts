@@ -1,7 +1,24 @@
-export interface KrakenResponse<T> {
+export interface UnsafeKrakenResponse<T> {
+  error: string[] | null;
+  result: T | null;
+}
+
+export interface SafeKrakenResponse<T> {
   error: string[];
   result: T;
 }
+
+export interface KrakenResponse<T, C> {
+  response: T;
+  warnings: C | null;
+}
+
+export interface KrakenValidation<T, C> {
+  validated: T;
+  warnings: C | null;
+}
+
+export type KrakenWarnings = string[];
 
 export interface StatusResponse {
   status: KrakenSystemStatus;
