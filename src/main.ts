@@ -1,29 +1,38 @@
-/* import {
+import KrakenAPI from './api/krakenAPI.js';
+import {
   LunchMoneyCryptoConnection,
   LunchMoneyCryptoConnectionContext,
   LunchMoneyCryptoConnectionConfig,
-  CryptoBalance,
-  LunchMoneyCryptoConnectionBalances,
-  LunchMoneyCryptoConnectionInitialization,
-} from './types/lunchMoney';
+} from './types/lunchMoney.js';
 
-export { LunchMoneyCryptoConnection } from './types/lunchMoney';
+export { LunchMoneyCryptoConnection } from './types/lunchMoney.js';
+
+export interface LunchMoneyKrakenConnectionConfig extends LunchMoneyCryptoConnectionConfig {
+  apiKey: string;
+  apiSecret: string;
+}
+
+export interface LunchMoneyKrakenConnectionContext extends LunchMoneyCryptoConnectionContext {
+  KrakenClientConstructor: KrakenAPI;
+}
 
 export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
-  LunchMoneyCryptoConnectionConfig,
-  LunchMoneyCryptoConnectionContext
+  LunchMoneyKrakenConnectionConfig,
+  LunchMoneyKrakenConnectionContext
 > = {
-  getBalances(
-    config: LunchMoneyCryptoConnectionConfig,
-    context: LunchMoneyCryptoConnectionContext,
-  ): Promise<LunchMoneyCryptoConnectionBalances> {
-    //
+  async initiate(config, context) {
+    const kraken = new KrakenAPI(config.apiKey, config.apiSecret);
+    await kraken.TestFlight();
+
+    return LunchMoneyKrakenConnection.getBalances(config, context);
   },
-  initiate(
-    config: LunchMoneyCryptoConnectionConfig,
-    context: LunchMoneyCryptoConnectionContext,
-  ): Promise<LunchMoneyCryptoConnectionInitialization> {
-    //
+  async getBalances(config) {
+    const kraken = new KrakenAPI(config.apiKey, config.apiSecret);
+    const balances = await kraken.GetAccountBalances();
+
+    return {
+      providerName: 'kraken',
+      balances: balances.response,
+    };
   },
 };
- */
