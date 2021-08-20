@@ -23,7 +23,7 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
     const validation = validateResponse(response) as KrakenValidation<StatusResponse, KrakenWarnings>;
 
     if (validation.result.status !== KrakenSystemStatus.ONLINE) {
-      throw new Error(`Kraken API is not available while being in mode ${response}.`);
+      throw new Error(`Kraken API is not available while being in mode ${validation.result.status}.`);
     }
 
     return await LunchMoneyKrakenConnection.getBalances(config);
