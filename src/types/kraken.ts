@@ -3,6 +3,7 @@ import KrakenAPI from '../api/krakenAPI.js';
 
 export interface LunchMoneyKrakenConnectionConfig extends LunchMoneyCryptoConnectionConfig {
   apiSecret: string;
+  otp?: string | null;
 }
 
 export interface LunchMoneyKrakenConnectionContext extends LunchMoneyCryptoConnectionContext {

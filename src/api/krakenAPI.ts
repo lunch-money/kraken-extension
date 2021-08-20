@@ -35,10 +35,15 @@ export default class KrakenAPI {
   // Query Funds permission
   async getAccountBalances(): Promise<Response<KrakenResponse<Map<string, string>>>> {
     const nonce = KrakenAPI.genNonce();
+    let payload: Record<string, string | number> = { nonce: nonce };
+
+    if (this.connection.otp) {
+      payload = { ...payload, otp: this.connection.otp };
+    }
 
     return this.client.post<KrakenResponse<Map<string, string>>>(
       this.routes.PRIVATE_BALANCE,
-      this.options(this.routes.PRIVATE_BALANCE, { nonce: nonce }, this.connection.apiSecret, nonce),
+      this.options(this.routes.PRIVATE_BALANCE, payload, this.connection.apiSecret, nonce),
     );
   }
 
