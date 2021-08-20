@@ -3,7 +3,7 @@
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type LunchMoneyCryptoConnectionConfig = {
-  cryptoAccountId: string | null;
+  cryptoAccountId?: string | null;
   apiKey: string;
 };
 
