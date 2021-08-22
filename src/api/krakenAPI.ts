@@ -27,6 +27,7 @@ export default class KrakenAPI {
         'User-Agent': 'LunchMoney Kraken Client',
         'API-Key': connection.apiKey,
       },
+      throwHttpErrors: false,
     });
 
     this.connection = connection;

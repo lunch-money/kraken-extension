@@ -62,10 +62,6 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
         cleaned = key.substr(1);
       }
 
-      if (balances.filter((balance) => balance.raw === key).length !== 0) {
-        throw new Error(`Error received duplicated asset ${key}.`);
-      }
-
       balances.push(<CryptoBalance>{
         type: type,
         raw: key,
@@ -98,7 +94,7 @@ export function validateResponse(
   let warnings: KrakenWarnings | null = null;
 
   if (response.statusCode !== 200 || response.body.result === null) {
-    throw new Error(`Received unknown response from Kraken: ${response.statusCode} ${response.body}`);
+    throw new Error(`Received unknown response from Kraken: ${response.statusCode} ${JSON.stringify(response.body)}`);
   }
 
   if (response.body.error && response.body.error.length !== 0) {
