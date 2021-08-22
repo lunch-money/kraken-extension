@@ -53,22 +53,54 @@ describe('LunchMoneyKrakenConnection', () => {
   });
   describe('getBalances', () => {
     it('Kraken responses with status code 200', async () => {
-      nock('https://api.kraken.com')
-        .post('/0/private/Balance')
-        .reply(200, {
-          error: [],
-          result: {
-            ZEUR: '0.0001',
-            XXBT: '0.0000028420',
-            XETH: '0.0000097500',
-            DAI: '0.0000042000',
-            ETH2: '0.0000143990',
-          },
-        });
+      scope.post('/0/private/Balance').reply(200, {
+        error: [],
+        result: {
+          ZEUR: '504861.8946',
+          XXBT: '1011.1908877900',
+        },
+      });
 
       const response = await LunchMoneyKrakenConnection.getBalances(config);
       assert.strictEqual(response.providerName, 'kraken');
-      assert.strictEqual(response.balances.length, 5);
+      assert.strictEqual(response.balances.length, 2);
+
+      assert.strictEqual(response.balances[0].asset, 'EUR');
+      assert.strictEqual(response.balances[0].raw, 'ZEUR');
+      assert.strictEqual(response.balances[0].type, 'cash');
+      assert.strictEqual(response.balances[0].amount, '504861.8946');
+
+      assert.strictEqual(response.balances[1].asset, 'XBT');
+      assert.strictEqual(response.balances[1].raw, 'XXBT');
+      assert.strictEqual(response.balances[1].type, 'crypto');
+      assert.strictEqual(response.balances[1].amount, '1011.1908877900');
+    });
+    it('Kraken responses with other status codes', async () => {
+      scope.post('/0/private/Balance').reply(500, {});
+
+      await expect(LunchMoneyKrakenConnection.getBalances(config)).to.be.rejectedWith(
+        'Received unknown response from Kraken:',
+      );
+    });
+    it('Kraken responses with empty body', async () => {
+      scope.post('/0/private/Balance').reply(200, {
+        error: [],
+        result: {},
+      });
+
+      const response = await LunchMoneyKrakenConnection.getBalances(config);
+      assert.strictEqual(response.providerName, 'kraken');
+      assert.strictEqual(response.balances.length, 0);
+    });
+    it('Kraken responses with any error', async () => {
+      scope.post('/0/private/Balance').reply(200, {
+        error: ['EGeneral:Permission denied'],
+        result: {},
+      });
+
+      await expect(LunchMoneyKrakenConnection.getBalances(config)).to.be.rejectedWith(
+        'Error receiving response from Kraken: General:Permission denied',
+      );
     });
   });
 });
