@@ -17,6 +17,11 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
   LunchMoneyKrakenConnectionConfig,
   LunchMoneyKrakenConnectionContext
 > = {
+  /**
+   * Checks kraken's system status to be ONLINE and runs getBalances. Unfortunately, kraken does not provide us
+   * with an endpoint to fetch api-key permissions. While this might be possible in future, functions will throw
+   * "EGeneral:Permission denied" in the meantime.
+   */
   async initiate(config, context): Promise<LunchMoneyCryptoConnectionBalances> {
     const kraken = context ? context.kraken : new KrakenAPI(config);
     const response = await kraken.getSystemStatus();
@@ -28,6 +33,16 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
 
     return await LunchMoneyKrakenConnection.getBalances(config);
   },
+  /**
+   * Utils getAccountBalance endpoint to receive crypto accounts.
+   * Assets are prefixed with (Z) for cash and (X) for crypto which makes it possible to return along with parsed asset
+   * type (cash/crypto) and raw title (X/Z<Asset>) for each account.
+   *
+   * Some asset titles do not comply with common used terms (XBT = BTC, ETH2.S = sub account type staking). We might
+   * need to handle them in future. For now, they are returned as-is.
+   *
+   * @see https://docs.kraken.com/rest/#operation/getAccountBalance
+   */
   async getBalances(config, context): Promise<LunchMoneyCryptoConnectionBalances> {
     const kraken = context ? context.kraken : new KrakenAPI(config);
     const response = await kraken.getAccountBalances();
@@ -70,6 +85,13 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
   },
 };
 
+/**
+ * Checks against faulty formats, non-200 status and parses errors / warnings from response if available.
+ * Kraken prefixes errors (E) and warnings (W), some common errors are:
+ *
+ * - EAPI:Invalid signature (OTP required)
+ * - EGeneral:Permission denied (Wrong or none permission granted)
+ */
 export function validateResponse(
   response: Response<KrakenResponse<unknown>>,
 ): KrakenValidation<unknown, KrakenWarnings> {
