@@ -92,6 +92,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lunch-money/kraken-extension@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@lunch-money/kraken-extension@workspace:."
+  dependencies:
+    "@types/chai": ^4
+    "@types/chai-as-promised": ^7.1.4
+    "@types/got": ^9.6.12
+    "@types/mocha": ^9
+    "@types/nock": ^11.1.0
+    "@types/node": ^16.7.2
+    "@types/qs": ^6
+    "@typescript-eslint/eslint-plugin": ^4.29.2
+    "@typescript-eslint/parser": ^4.29.2
+    chai: ^4.3.4
+    chai-as-promised: ^7.1.1
+    crypto: ^1.0.1
+    eslint: ^7.32.0
+    eslint-config-prettier: ^8.3.0
+    eslint-plugin-prettier: ^3.4.0
+    got: ^11.8.2
+    husky: ^7.0.0
+    lint-staged: ^11.1.2
+    mocha: ^9.1.0
+    nock: ^13.1.1
+    prettier: ^2.3.2
+    qs: ^6.10.1
+    ts-node: ^10.2.1
+    typescript: ^4.3.5
+  languageName: unknown
+  linkType: soft
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -262,6 +293,13 @@ __metadata:
   version: 16.6.1
   resolution: "@types/node@npm:16.6.1"
   checksum: c13aa0da0c2bf9070e521d1b537ba38f64b213dd1b8aeec66c279fc21f8c0ccaf380364f6dc2ec8f84440c4cd1460b67dfe47de2cafcb6eaf4b648817cb27dc4
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^16.7.2":
+  version: 16.7.2
+  resolution: "@types/node@npm:16.7.2"
+  checksum: aef77c109e2fd93b5dc6ec0a57a0878aaaa58adf0e63d9618d67b116ad3f2a3eb2589a99deaf9fda4a0805068b2533e3d2cf8e8dc3572251c498ec3dc929a76c
   languageName: node
   linkType: hard
 
@@ -2068,36 +2106,6 @@ fsevents@~2.3.2:
   checksum: 770134225c5320861748bf65f022e7ce100e465b85b28fe39036ef66f6190bb602aa8a57df365b9c745005d948fc1f0da99306062875a2f52700195e0b4d1033
   languageName: node
   linkType: hard
-
-"kraken-extension@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "kraken-extension@workspace:."
-  dependencies:
-    "@types/chai": ^4
-    "@types/chai-as-promised": ^7.1.4
-    "@types/got": ^9.6.12
-    "@types/mocha": ^9
-    "@types/nock": ^11.1.0
-    "@types/qs": ^6
-    "@typescript-eslint/eslint-plugin": ^4.29.2
-    "@typescript-eslint/parser": ^4.29.2
-    chai: ^4.3.4
-    chai-as-promised: ^7.1.1
-    crypto: ^1.0.1
-    eslint: ^7.32.0
-    eslint-config-prettier: ^8.3.0
-    eslint-plugin-prettier: ^3.4.0
-    got: ^11.8.2
-    husky: ^7.0.0
-    lint-staged: ^11.1.2
-    mocha: ^9.1.0
-    nock: ^13.1.1
-    prettier: ^2.3.2
-    qs: ^6.10.1
-    ts-node: ^10.2.1
-    typescript: ^4.3.5
-  languageName: unknown
-  linkType: soft
 
 "levn@npm:^0.4.1":
   version: 0.4.1
