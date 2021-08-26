@@ -1,20 +1,31 @@
 {
   "name": "kraken-extension",
-  "private": true,
-  "packageManager": "yarn@3.0.1",
-  "authors": [
-    {
-      "name": "Steven Steinrücken",
-      "email": "info@steven-steinruecken.de"
-    },
-    {
-      "name": "Max Dumas",
-      "email": "maltor124@gmail.com"
+  "version": "0.9.9",
+  "main": "dist/cjs/main.js",
+  "module": "dist/mjs/main.js",
+  "exports": {
+    ".": {
+      "import": "./dist/mjs/main.js",
+      "require": "./dist/cjs/main.js"
     }
+  },
+  "typesVersions": {
+    "*": {
+      "main.d.ts": [
+        "dist/mjs/main.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist/**/*"
   ],
+  "packageManager": "yarn@3.0.1",
+  "author": {
+    "name": "Steven Steinrücken",
+    "email": "info@steven-steinruecken.de"
+  },
   "bugs": "https://github.com/lunch-money/kraken-extension/issues",
   "homepage": "https://github.com/lunch-money/kraken-extension#README",
-  "version": "1.0.0",
   "license": "MIT",
   "keywords": [
     "lunch money",
@@ -23,23 +34,12 @@
   ],
   "description": "A wrapper around the Kraken API for enabling Lunch Money to gather information about a user's account.",
   "repository": "github:lunch-money/kraken-extension",
-  "main": "./dist/main.js",
-  "exports": {
-    ".": "./dist/main.js"
-  },
-  "typesVersions": {
-    "*": {
-      "main.d.ts": [
-        "dist/main.d.ts"
-      ]
-    }
-  },
-  "type": "module",
   "scripts": {
-    "build": "tsc",
+    "clean": "rm -rf dist/*",
+    "build": "npm run clean && tsc -p tsconfig.build-mjs.json && tsc -p tsconfig.build-cjs.json && ./postbuild",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --fix",
     "test": "node --loader ts-node/esm node_modules/mocha/lib/cli/cli --recursive --extension ts",
-    "postinstall": "husky install"
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@types/chai": "^4",
