@@ -1,5 +1,5 @@
-import { LunchMoneyCryptoConnectionConfig, LunchMoneyCryptoConnectionContext } from './lunchMoney.js';
-import KrakenAPI from '../api/krakenAPI.js';
+import { LunchMoneyCryptoConnectionConfig, LunchMoneyCryptoConnectionContext } from './lunchMoney';
+import KrakenAPI from '../api/krakenAPI';
 
 export interface LunchMoneyKrakenConnectionConfig extends LunchMoneyCryptoConnectionConfig {
   apiSecret: string;

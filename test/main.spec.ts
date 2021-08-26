@@ -1,6 +1,6 @@
 import nock from 'nock';
-import { LunchMoneyKrakenConnectionConfig } from '../src/types/kraken.js';
-import { LunchMoneyKrakenConnection } from '../src/main.js';
+import { LunchMoneyKrakenConnectionConfig } from '../src/types/kraken';
+import { LunchMoneyKrakenConnection } from '../src/main';
 import { assert, expect } from 'chai';
 import { it } from 'mocha';
 import chai from 'chai';

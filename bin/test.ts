@@ -1,4 +1,4 @@
-import * as Kraken from '../src/main.js';
+import * as Kraken from '../src/main';
 
 Kraken.LunchMoneyKrakenConnection.initiate({
   apiKey: process.env.API_KEY ?? '',

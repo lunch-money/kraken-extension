@@ -1,5 +1,5 @@
-import KrakenAPI from './api/krakenAPI.js';
-import { CryptoBalance, LunchMoneyCryptoConnectionBalances, LunchMoneyCryptoConnection } from './types/lunchMoney.js';
+import KrakenAPI from './api/krakenAPI';
+import { CryptoBalance, LunchMoneyCryptoConnectionBalances, LunchMoneyCryptoConnection } from './types/lunchMoney';
 import {
   KrakenResponse,
   KrakenSystemStatus,
@@ -8,10 +8,10 @@ import {
   LunchMoneyKrakenConnectionConfig,
   LunchMoneyKrakenConnectionContext,
   StatusResponse,
-} from './types/kraken.js';
+} from './types/kraken';
 import { Response } from 'got';
 
-export { LunchMoneyCryptoConnection } from './types/lunchMoney.js';
+export { LunchMoneyCryptoConnection } from './types/lunchMoney';
 
 export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
   LunchMoneyKrakenConnectionConfig,
