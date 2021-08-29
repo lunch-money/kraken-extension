@@ -9,7 +9,7 @@ import {
   LunchMoneyKrakenConnectionContext,
   StatusResponse,
 } from './types/kraken';
-import { Response } from 'got';
+import { AxiosResponse } from 'axios';
 
 export { LunchMoneyCryptoConnection } from './types/lunchMoney';
 
@@ -89,16 +89,16 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
  * - EGeneral:Permission denied (Wrong or none permission granted)
  */
 export function validateResponse(
-  response: Response<KrakenResponse<unknown>>,
+  response: AxiosResponse<KrakenResponse<unknown>>,
 ): KrakenValidation<unknown, KrakenWarnings> {
   let warnings: KrakenWarnings | null = null;
 
-  if (response.statusCode !== 200 || response.body.result === null) {
-    throw new Error(`Received unknown response from Kraken: ${response.statusCode} ${JSON.stringify(response.body)}`);
+  if (response.status !== 200 || response.data.result === null) {
+    throw new Error(`Received unknown response from Kraken: ${response.status} ${JSON.stringify(response.data)}`);
   }
 
-  if (response.body.error && response.body.error.length !== 0) {
-    const error = response.body.error
+  if (response.data.error && response.data.error.length !== 0) {
+    const error = response.data.error
       .filter((e) => e.startsWith('E'))
       .map((e) => e.substr(1))
       .join(', ');
@@ -107,8 +107,8 @@ export function validateResponse(
       throw new Error(`Error receiving response from Kraken: ${error}`);
     }
 
-    warnings = response.body.error.filter((e) => e.startsWith('W')).map((e) => e.substr(1));
+    warnings = response.data.error.filter((e) => e.startsWith('W')).map((e) => e.substr(1));
   }
 
-  return { result: response.body.result, warnings: warnings };
+  return { result: response.data.result, warnings: warnings };
 }
