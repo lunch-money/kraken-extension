@@ -38,8 +38,8 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
    * Assets are prefixed with (Z) for cash and (X) for crypto which makes it possible to return along with parsed asset
    * type (cash/crypto) and raw title (X/Z<Asset>) for each account.
    *
-   * Some asset titles do not comply with common used terms (XBT = BTC, ETH2.S = sub account type staking). We might
-   * need to handle them in future. For now, they are returned as-is.
+   * Some asset titles do not comply with common used terms (XBT = BTC, ETH2.S = sub account type staking). For that
+   * we have implemented a mapping function.
    *
    * @see https://docs.kraken.com/rest/#operation/getAccountBalance
    */
@@ -51,6 +51,11 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
     const balances: CryptoBalance[] = [];
 
     for (const [key, value] of Object.entries(validation.result)) {
+      // Ignoring (staking / margin / on hold) accounts for now
+      if (key.includes('.')) {
+        continue;
+      }
+
       let type = 'crypto';
 
       if (key.startsWith('Z')) {
@@ -65,7 +70,7 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
       balances.push(<CryptoBalance>{
         type: type,
         raw: key,
-        asset: cleaned ?? key,
+        asset: krakenToCommon(cleaned ?? key),
         amount: value,
       });
     }
@@ -111,4 +116,15 @@ export function validateResponse(
   }
 
   return { result: response.body.result, warnings: warnings };
+}
+
+/**
+ * Maps some special kraken symbols to common ones.
+ */
+export function krakenToCommon(ticker: string): string {
+  const mapping: Record<string, string> = {
+    XBT: 'BTC',
+  };
+
+  return mapping[ticker] ?? ticker;
 }

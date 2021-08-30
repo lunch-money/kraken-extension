@@ -58,6 +58,9 @@ describe('LunchMoneyKrakenConnection', () => {
         result: {
           ZEUR: '504861.8946',
           XXBT: '1011.1908877900',
+          'EUR.HOLD': '500.4838',
+          'EUR.M': '342.6940',
+          'ETH2.S': '0.1908877900',
         },
       });
 
@@ -70,7 +73,7 @@ describe('LunchMoneyKrakenConnection', () => {
       assert.strictEqual(response.balances[0].type, 'cash');
       assert.strictEqual(response.balances[0].amount, '504861.8946');
 
-      assert.strictEqual(response.balances[1].asset, 'XBT');
+      assert.strictEqual(response.balances[1].asset, 'BTC');
       assert.strictEqual(response.balances[1].raw, 'XXBT');
       assert.strictEqual(response.balances[1].type, 'crypto');
       assert.strictEqual(response.balances[1].amount, '1011.1908877900');
