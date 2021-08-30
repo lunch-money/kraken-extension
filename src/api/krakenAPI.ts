@@ -1,12 +1,11 @@
 import * as crypto from 'crypto';
 import { BinaryToTextEncoding } from 'crypto';
 import qs from 'qs';
-import got, { Got, Response } from 'got';
 import { StatusResponse, LunchMoneyKrakenConnectionConfig, KrakenResponse } from '../types/kraken.js';
-import { OptionsOfJSONResponseBody } from 'got/dist/source/types';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export default class KrakenAPI {
-  readonly client: Got;
+  readonly client: AxiosInstance;
   readonly connection: LunchMoneyKrakenConnectionConfig;
 
   config = {
@@ -20,21 +19,24 @@ export default class KrakenAPI {
   };
 
   constructor(connection: LunchMoneyKrakenConnectionConfig) {
-    this.client = got.extend({
-      prefixUrl: this.config.url + this.config.version,
+    this.client = axios.create({
+      baseURL: this.config.url + this.config.version,
       headers: {
-        // If the Content-Type header is not present, it will be set to application/x-www-form-urlencoded.
         'User-Agent': 'LunchMoney Kraken Client',
         'API-Key': connection.apiKey,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      throwHttpErrors: false,
+      // always resolve as errors are custom handled
+      validateStatus: () => {
+        return true;
+      },
     });
 
     this.connection = connection;
   }
 
   // Query Funds permission
-  async getAccountBalances(): Promise<Response<KrakenResponse<Map<string, string>>>> {
+  async getAccountBalances(): Promise<AxiosResponse<KrakenResponse<Map<string, string>>>> {
     const nonce = KrakenAPI.genNonce();
     let payload: Record<string, string | number> = { nonce: nonce };
 
@@ -44,23 +46,23 @@ export default class KrakenAPI {
 
     return this.client.post<KrakenResponse<Map<string, string>>>(
       this.routes.PRIVATE_BALANCE,
+      KrakenAPI.formUrlEncoded(payload),
       this.options(this.routes.PRIVATE_BALANCE, payload, this.connection.apiSecret, nonce),
     );
   }
 
-  async getSystemStatus(): Promise<Response<KrakenResponse<StatusResponse>>> {
+  async getSystemStatus(): Promise<AxiosResponse<KrakenResponse<StatusResponse>>> {
     return this.client.get<KrakenResponse<StatusResponse>>(this.routes.PUBLIC_SYSTEM_STATUS, {
       responseType: 'json',
     });
   }
 
-  options(path: string, payload: Record<string, unknown>, secret: string, nonce: number): OptionsOfJSONResponseBody {
+  options(path: string, payload: Record<string, unknown>, secret: string, nonce: number): AxiosRequestConfig {
     return {
       headers: {
         'API-Sign': KrakenAPI.getMessageSignature('/' + this.config.version + '/' + path, payload, secret, nonce),
       },
       responseType: 'json',
-      form: payload,
     };
   }
 
@@ -76,5 +78,17 @@ export default class KrakenAPI {
 
   static genNonce(): number {
     return Date.now() * 1000;
+  }
+
+  static formUrlEncoded(payload: Record<string, string | number>): string {
+    return Object.keys(payload).reduce(function (p, c) {
+      let prefix = '&';
+
+      if (!p) {
+        prefix = '';
+      }
+
+      return p + prefix + `${c}=${encodeURIComponent(payload[c])}`;
+    }, '');
   }
 }

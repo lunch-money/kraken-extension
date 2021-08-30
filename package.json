@@ -1,6 +1,6 @@
 {
   "name": "@lunch-money/kraken-extension",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "main": "dist/cjs/main.js",
   "module": "dist/mjs/main.js",
   "exports": {
@@ -44,7 +44,6 @@
   "devDependencies": {
     "@types/chai": "^4",
     "@types/chai-as-promised": "^7.1.4",
-    "@types/got": "^9.6.12",
     "@types/mocha": "^9",
     "@types/nock": "^11.1.0",
     "@types/node": "^16.7.2",
@@ -73,8 +72,8 @@
     ]
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "crypto": "^1.0.1",
-    "got": "^11.8.2",
     "qs": "^6.10.1"
   }
 }
