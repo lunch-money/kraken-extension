@@ -1,6 +1,6 @@
 {
   "name": "@lunch-money/kraken-extension",
-  "version": "0.9.11",
+  "version": "1.0.0",
   "main": "dist/cjs/main.js",
   "module": "dist/mjs/main.js",
   "exports": {
