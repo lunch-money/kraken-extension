@@ -48,12 +48,12 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
     const response = await kraken.getAccountBalances();
     const validation = validateResponse(response) as KrakenValidation<Map<string, string>, KrakenWarnings>;
 
-    const balances: CryptoBalance[] = [];
+    const balances: Record<string, CryptoBalance> = {};
 
-    for (const [key, value] of Object.entries(validation.result)) {
-      // Ignoring (staking / margin / on hold) accounts for now
+    Object.entries(validation.result).forEach(function ([key, value]) {
       if (key.includes('.')) {
-        continue;
+        const parts = key.split('.');
+        key = parts[0];
       }
 
       let type = 'crypto';
@@ -67,13 +67,18 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
         cleaned = key.substr(1);
       }
 
-      balances.push(<CryptoBalance>{
-        type: type,
-        raw: key,
-        asset: krakenToCommon(cleaned ?? key),
-        amount: value,
-      });
-    }
+      let balance = updateBalance(balances[cleaned ?? key], value);
+      if (!balance) {
+        balance = <CryptoBalance>{
+          type: type,
+          raw: key,
+          asset: krakenToCommon(cleaned ?? key),
+          amount: value,
+        };
+      }
+
+      balances[cleaned ?? key] = balance;
+    });
 
     if (validation.warnings !== null) {
       console.warn(`Received following warnings from Kraken: ${validation.warnings.join(', ')}`);
@@ -81,7 +86,7 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
 
     return {
       providerName: 'kraken',
-      balances: balances,
+      balances: Object.values(balances),
     };
   },
 };
@@ -127,4 +132,16 @@ export function krakenToCommon(ticker: string): string {
   };
 
   return mapping[ticker] ?? ticker;
+}
+
+/**
+ * If passed, increases crypto balance by given value
+ */
+export function updateBalance(balance: CryptoBalance | null, value: string): CryptoBalance | null {
+  if (balance == null) {
+    return null;
+  }
+
+  balance.amount = (Number.parseFloat(balance.amount) + Number.parseFloat(value)).toString();
+  return balance;
 }

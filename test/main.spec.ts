@@ -61,22 +61,29 @@ describe('LunchMoneyKrakenConnection', () => {
           'EUR.HOLD': '500.4838',
           'EUR.M': '342.6940',
           'ETH2.S': '0.1908877900',
+          ETH2: '0.1908877900',
         },
       });
 
       const response = await LunchMoneyKrakenConnection.getBalances(config);
+
       assert.strictEqual(response.providerName, 'kraken');
-      assert.strictEqual(response.balances.length, 2);
+      assert.strictEqual(response.balances.length, 3);
 
       assert.strictEqual(response.balances[0].asset, 'EUR');
       assert.strictEqual(response.balances[0].raw, 'ZEUR');
       assert.strictEqual(response.balances[0].type, 'cash');
-      assert.strictEqual(response.balances[0].amount, '504861.8946');
+      assert.strictEqual(response.balances[0].amount, '505705.0724');
 
       assert.strictEqual(response.balances[1].asset, 'BTC');
       assert.strictEqual(response.balances[1].raw, 'XXBT');
       assert.strictEqual(response.balances[1].type, 'crypto');
       assert.strictEqual(response.balances[1].amount, '1011.1908877900');
+
+      assert.strictEqual(response.balances[2].asset, 'ETH2');
+      assert.strictEqual(response.balances[2].raw, 'ETH2');
+      assert.strictEqual(response.balances[2].type, 'crypto');
+      assert.strictEqual(response.balances[2].amount, '0.38177558');
     });
     it('Kraken responses with other status codes', async () => {
       scope.post('/0/private/Balance').reply(500, {});
