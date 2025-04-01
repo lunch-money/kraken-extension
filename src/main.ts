@@ -64,7 +64,15 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
 
       let cleaned: string | null = null;
       if (key.startsWith('Z') || key.startsWith('X')) {
-        cleaned = key.substr(1);
+        // According to https://support.kraken.com/hc/en-us/articles/360001206766-Bitcoin-currency-code-XBT-vs-BTC
+        // Stripping the Z or X of the front works most of the time but there are some exceptions
+        if (key === 'XBT' || key === 'XXBT') {
+          cleaned = 'BTC';
+        } else if (key === 'XDG') {
+          cleaned = 'DOGE';
+        } else {
+          cleaned = key.substr(1);
+        }
       }
 
       let balance = updateBalance(balances[cleaned ?? key], value);
@@ -141,7 +149,11 @@ export function updateBalance(balance: CryptoBalance | null, value: string): Cry
   if (balance == null) {
     return null;
   }
+  // parseFloat can give too much precision.  Get the length of the original values
+  const precision = Math.max(balance.amount.split('.')[1].length, value.split('.')[1].length);
 
-  balance.amount = (Number.parseFloat(balance.amount) + Number.parseFloat(value)).toString();
+  // Round the new balance to the determined precision
+  balance.amount = (Number.parseFloat(balance.amount) + Number.parseFloat(value)).toFixed(precision).toString();
+
   return balance;
 }
