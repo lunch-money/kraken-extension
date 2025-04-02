@@ -154,7 +154,6 @@ describe('LunchMoneyKrakenConnection', () => {
       });
 
       const response = await LunchMoneyKrakenConnection.getBalances(config);
-      console.log(response.balances);
 
       assert.strictEqual(response.providerName, 'kraken');
       assert.strictEqual(response.balances.length, 3);
