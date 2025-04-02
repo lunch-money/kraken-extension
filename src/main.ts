@@ -68,7 +68,7 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
         // Stripping the Z or X of the front works most of the time but there are some exceptions
         if (key === 'XBT' || key === 'XXBT') {
           cleaned = 'BTC';
-        } else if (key === 'XDG') {
+        } else if (key === 'XDG' || key == 'XXDG') {
           cleaned = 'DOGE';
         } else {
           cleaned = key.substr(1);
@@ -83,6 +83,13 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
           asset: krakenToCommon(cleaned ?? key),
           amount: value,
         };
+      } else if (balance.type != type) {
+        // Cash types generally start with a Z but the Kraken API returns different symbols
+        // for staking and bonus programs like EUR.M or EUR.HOLD
+        // if we get a Z code for anything let's set the type to cash
+        if (key.startsWith('Z')) {
+          balance.type = 'cash';
+        }
       }
 
       balances[cleaned ?? key] = balance;
