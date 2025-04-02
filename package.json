@@ -19,7 +19,6 @@
   "files": [
     "dist/**/*"
   ],
-  "packageManager": "yarn@4.6.0",
   "author": {
     "name": "Steven Steinrücken",
     "email": "info@steven-steinruecken.de"
