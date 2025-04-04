@@ -22,7 +22,7 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Test
         run: yarn test --ci --coverage
@@ -40,4 +40,4 @@ jobs:
 
       - name: Publish
         if: github.ref == 'refs/heads/main'
-        run: corepack yarn npm publish --access public
+        run: yarn npm publish --access public
