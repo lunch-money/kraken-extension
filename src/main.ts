@@ -13,6 +13,44 @@ import { AxiosResponse } from 'axios';
 
 export { LunchMoneyCryptoConnection } from './types/lunchMoney';
 
+// According to https://support.kraken.com/hc/en-us/articles/360001206766-Bitcoin-currency-code-XBT-vs-BTC
+// Kraken API returns some legacy symbols which should be remapped
+const KRAKEN_SYMBOL_MAP: { [key: string]: string } = {
+  XETC: 'ETC',
+  XETH: 'ETH',
+  XLTC: 'LTC',
+  XMLN: 'MLN',
+  XREP: 'REP',
+  XXBT: 'BTC',
+  XXDG: 'DOGE',
+  XXLM: 'XLM',
+  XXMR: 'XMR',
+  XXRP: 'XRP',
+  XZEC: 'ZEC',
+  ZAUD: 'AUD',
+  ZCAD: 'CAD',
+  ZEUR: 'EUR',
+  ZGBP: 'GBP',
+  ZJPY: 'JPY',
+  ZUSD: 'USD',
+  XBT: 'BTC',
+  XDG: 'DOGE',
+};
+
+function transformSymbol(symbol: string): { symbol: string; type: string } {
+  // Define the mapping of symbols
+
+  // Check if the symbol exists in the map
+  if (KRAKEN_SYMBOL_MAP[symbol]) {
+    // Determine the type based on the original symbol's prefix
+    const type = symbol.startsWith('Z') ? 'cash' : 'crypto';
+    return { symbol: KRAKEN_SYMBOL_MAP[symbol], type };
+  }
+
+  // Return original symbol if not a a transform
+  return { symbol, type: 'crypto' };
+}
+
 export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
   LunchMoneyKrakenConnectionConfig,
   LunchMoneyKrakenConnectionContext
@@ -56,36 +94,27 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
         key = parts[0];
       }
 
-      let type = 'crypto';
-
-      if (key.startsWith('Z')) {
-        type = 'cash';
-      }
-
-      let cleaned: string | null = null;
-      if (key.startsWith('Z') || key.startsWith('X')) {
-        // According to https://support.kraken.com/hc/en-us/articles/360001206766-Bitcoin-currency-code-XBT-vs-BTC
-        // Stripping the Z or X of the front works most of the time but there are some exceptions
-        if (key === 'XBT' || key === 'XXBT') {
-          cleaned = 'BTC';
-        } else if (key === 'XDG') {
-          cleaned = 'DOGE';
-        } else {
-          cleaned = key.substr(1);
-        }
-      }
-
-      let balance = updateBalance(balances[cleaned ?? key], value);
+      // Maps some special kraken symbols to common ones.
+      const { symbol, type } = transformSymbol(key);
+      // Create or update Lunch Money Connector balance object
+      let balance = updateBalance(balances[symbol], value);
       if (!balance) {
         balance = <CryptoBalance>{
           type: type,
           raw: key,
-          asset: krakenToCommon(cleaned ?? key),
+          asset: symbol,
           amount: value,
         };
+      } else if (balance.type != type) {
+        // Cash types generally start with a Z but the Kraken API returns different symbols
+        // for staking and bonus programs like EUR.M or EUR.HOLD.  If any of the symbols
+        // maps to cash treat it as cash
+        if (type === 'cash') {
+          balance.type = type;
+        }
       }
 
-      balances[cleaned ?? key] = balance;
+      balances[symbol] = balance;
     });
 
     if (validation.warnings !== null) {
@@ -129,17 +158,6 @@ export function validateResponse(
   }
 
   return { result: response.data.result, warnings: warnings };
-}
-
-/**
- * Maps some special kraken symbols to common ones.
- */
-export function krakenToCommon(ticker: string): string {
-  const mapping: Record<string, string> = {
-    XBT: 'BTC',
-  };
-
-  return mapping[ticker] ?? ticker;
 }
 
 /**

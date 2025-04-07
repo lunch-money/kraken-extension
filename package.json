@@ -19,7 +19,6 @@
   "files": [
     "dist/**/*"
   ],
-  "packageManager": "yarn@3.0.1",
   "author": {
     "name": "Steven Steinrücken",
     "email": "info@steven-steinruecken.de"
@@ -36,7 +35,7 @@
   "repository": "github:lunch-money/kraken-extension",
   "scripts": {
     "clean": "rm -rf dist/*",
-    "build": "npm run clean && tsc -p tsconfig.build-mjs.json && tsc -p tsconfig.build-cjs.json && ./postbuild",
+    "build": "npm run clean && tsc -p tsconfig.build-mjs.json && tsc -p tsconfig.build-cjs.json && sh ./postbuild",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --fix",
     "test": "node --loader ts-node/esm node_modules/mocha/lib/cli/cli --recursive --extension ts",
     "prepare": "husky install"

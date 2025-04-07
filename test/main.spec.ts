@@ -83,8 +83,202 @@ describe('LunchMoneyKrakenConnection', () => {
       assert.strictEqual(response.balances[2].asset, 'ETH2');
       assert.strictEqual(response.balances[2].raw, 'ETH2');
       assert.strictEqual(response.balances[2].type, 'crypto');
-      assert.strictEqual(response.balances[2].amount, '0.38177558');
+      assert.strictEqual(response.balances[2].amount, '0.3817755800');
     });
+
+    it('Kraken responses with multiple bitcoin balances', async () => {
+      scope.post('/0/private/Balance').reply(200, {
+        error: [],
+        result: {
+          CRO: '0.0000',
+          'EUR.F': '200.0177',
+          USDC: '0.00000000',
+          'USDC.F': '0.00197533',
+          USDT: '0.00000000',
+          'XBT.F': '0.0000000004',
+          'XBT.M': '0.0737591219',
+          XXBT: '0.0000000000',
+          XXRP: '2485.99000000',
+          ZEUR: '0.0000',
+        },
+      });
+
+      const response = await LunchMoneyKrakenConnection.getBalances(config);
+
+      assert.strictEqual(response.providerName, 'kraken');
+      assert.strictEqual(response.balances.length, 6);
+
+      assert.strictEqual(response.balances[0].asset, 'CRO');
+      assert.strictEqual(response.balances[0].raw, 'CRO');
+      assert.strictEqual(response.balances[0].type, 'crypto');
+      assert.strictEqual(response.balances[0].amount, '0.0000');
+
+      assert.strictEqual(response.balances[1].asset, 'EUR');
+      assert.strictEqual(response.balances[1].raw, 'EUR');
+      assert.strictEqual(response.balances[1].type, 'cash');
+      assert.strictEqual(response.balances[1].amount, '200.0177');
+
+      assert.strictEqual(response.balances[2].asset, 'USDC');
+      assert.strictEqual(response.balances[2].raw, 'USDC');
+      assert.strictEqual(response.balances[2].type, 'crypto');
+      assert.strictEqual(response.balances[2].amount, '0.00197533');
+
+      assert.strictEqual(response.balances[3].asset, 'USDT');
+      assert.strictEqual(response.balances[3].raw, 'USDT');
+      assert.strictEqual(response.balances[3].type, 'crypto');
+      assert.strictEqual(response.balances[3].amount, '0.00000000');
+
+      assert.strictEqual(response.balances[4].asset, 'BTC');
+      assert.strictEqual(response.balances[4].raw, 'XBT');
+      assert.strictEqual(response.balances[4].type, 'crypto');
+      assert.strictEqual(response.balances[4].amount, '0.0737591223');
+
+      assert.strictEqual(response.balances[5].asset, 'XRP');
+      assert.strictEqual(response.balances[5].raw, 'XXRP');
+      assert.strictEqual(response.balances[5].type, 'crypto');
+      assert.strictEqual(response.balances[5].amount, '2485.99000000');
+    });
+
+    it('Kraken responses with DOGE coin status code 200', async () => {
+      scope.post('/0/private/Balance').reply(200, {
+        error: [],
+        result: {
+          ZEUR: '504861.8946',
+          XDG: '1011.1908877900',
+          'EUR.HOLD': '500.4838',
+          'EUR.M': '342.6940',
+          'ETH2.S': '0.1908877900',
+          ETH2: '0.1908877900',
+          XXDG: '0.00006',
+        },
+      });
+
+      const response = await LunchMoneyKrakenConnection.getBalances(config);
+
+      assert.strictEqual(response.providerName, 'kraken');
+      assert.strictEqual(response.balances.length, 3);
+
+      assert.strictEqual(response.balances[0].asset, 'EUR');
+      assert.strictEqual(response.balances[0].raw, 'ZEUR');
+      assert.strictEqual(response.balances[0].type, 'cash');
+      assert.strictEqual(response.balances[0].amount, '505705.0724');
+
+      assert.strictEqual(response.balances[1].asset, 'DOGE');
+      assert.strictEqual(response.balances[1].raw, 'XDG');
+      assert.strictEqual(response.balances[1].type, 'crypto');
+      assert.strictEqual(response.balances[1].amount, '1011.1909477900');
+
+      assert.strictEqual(response.balances[2].asset, 'ETH2');
+      assert.strictEqual(response.balances[2].raw, 'ETH2');
+      assert.strictEqual(response.balances[2].type, 'crypto');
+      assert.strictEqual(response.balances[2].amount, '0.3817755800');
+    });
+
+    it('Kraken responses with actual Z and X symbols and status code 200', async () => {
+      scope.post('/0/private/Balance').reply(200, {
+        error: [],
+        result: {
+          XRP: '504861.8946',
+          XMR: '961.88',
+          XLM: '100',
+          ZIL: '1011.1908877900',
+          ZEC: '0.1908877900',
+          ZK: '0.00006',
+          ZETA: '99.3423',
+        },
+      });
+
+      const response = await LunchMoneyKrakenConnection.getBalances(config);
+
+      assert.strictEqual(response.providerName, 'kraken');
+      assert.strictEqual(response.balances.length, 7);
+
+      assert.strictEqual(response.balances[0].asset, 'XRP');
+      assert.strictEqual(response.balances[0].raw, 'XRP');
+      assert.strictEqual(response.balances[0].type, 'crypto');
+      assert.strictEqual(response.balances[0].amount, '504861.8946');
+
+      assert.strictEqual(response.balances[1].asset, 'XMR');
+      assert.strictEqual(response.balances[1].raw, 'XMR');
+      assert.strictEqual(response.balances[1].type, 'crypto');
+      assert.strictEqual(response.balances[1].amount, '961.88');
+
+      assert.strictEqual(response.balances[2].asset, 'XLM');
+      assert.strictEqual(response.balances[2].raw, 'XLM');
+      assert.strictEqual(response.balances[2].type, 'crypto');
+      assert.strictEqual(response.balances[2].amount, '100');
+
+      assert.strictEqual(response.balances[3].asset, 'ZIL');
+      assert.strictEqual(response.balances[3].raw, 'ZIL');
+      assert.strictEqual(response.balances[3].type, 'crypto');
+      assert.strictEqual(response.balances[3].amount, '1011.1908877900');
+
+      assert.strictEqual(response.balances[4].asset, 'ZEC');
+      assert.strictEqual(response.balances[4].raw, 'ZEC');
+      assert.strictEqual(response.balances[4].type, 'crypto');
+      assert.strictEqual(response.balances[4].amount, '0.1908877900');
+
+      assert.strictEqual(response.balances[5].asset, 'ZK');
+      assert.strictEqual(response.balances[5].raw, 'ZK');
+      assert.strictEqual(response.balances[5].type, 'crypto');
+      assert.strictEqual(response.balances[5].amount, '0.00006');
+
+      assert.strictEqual(response.balances[6].asset, 'ZETA');
+      assert.strictEqual(response.balances[6].raw, 'ZETA');
+      assert.strictEqual(response.balances[6].type, 'crypto');
+      assert.strictEqual(response.balances[6].amount, '99.3423');
+    });
+
+    it('Kraken responses with special and actual Z and X symbols and status code 200', async () => {
+      scope.post('/0/private/Balance').reply(200, {
+        error: [],
+        result: {
+          XRP: '504861.8946',
+          XXBT: '1011.1908877900',
+          XLM: '100',
+          ZIL: '1011.1908877900',
+          ZEC: '0.1908877900',
+          XBT: '0.900',
+          ZETA: '99.3423',
+        },
+      });
+
+      const response = await LunchMoneyKrakenConnection.getBalances(config);
+
+      assert.strictEqual(response.providerName, 'kraken');
+      assert.strictEqual(response.balances.length, 6);
+
+      assert.strictEqual(response.balances[0].asset, 'XRP');
+      assert.strictEqual(response.balances[0].raw, 'XRP');
+      assert.strictEqual(response.balances[0].type, 'crypto');
+      assert.strictEqual(response.balances[0].amount, '504861.8946');
+
+      assert.strictEqual(response.balances[1].asset, 'BTC');
+      assert.strictEqual(response.balances[1].raw, 'XXBT');
+      assert.strictEqual(response.balances[1].type, 'crypto');
+      assert.strictEqual(response.balances[1].amount, '1012.0908877900');
+
+      assert.strictEqual(response.balances[2].asset, 'XLM');
+      assert.strictEqual(response.balances[2].raw, 'XLM');
+      assert.strictEqual(response.balances[2].type, 'crypto');
+      assert.strictEqual(response.balances[2].amount, '100');
+
+      assert.strictEqual(response.balances[3].asset, 'ZIL');
+      assert.strictEqual(response.balances[3].raw, 'ZIL');
+      assert.strictEqual(response.balances[3].type, 'crypto');
+      assert.strictEqual(response.balances[3].amount, '1011.1908877900');
+
+      assert.strictEqual(response.balances[4].asset, 'ZEC');
+      assert.strictEqual(response.balances[4].raw, 'ZEC');
+      assert.strictEqual(response.balances[4].type, 'crypto');
+      assert.strictEqual(response.balances[4].amount, '0.1908877900');
+
+      assert.strictEqual(response.balances[5].asset, 'ZETA');
+      assert.strictEqual(response.balances[5].raw, 'ZETA');
+      assert.strictEqual(response.balances[5].type, 'crypto');
+      assert.strictEqual(response.balances[5].amount, '99.3423');
+    });
+
     it('Kraken responses with other status codes', async () => {
       scope.post('/0/private/Balance').reply(500, {});
 
