@@ -47,8 +47,8 @@ function transformSymbol(symbol: string): { symbol: string; type: string } {
     return { symbol: KRAKEN_SYMBOL_MAP[symbol], type };
   }
 
-  // Return null if no transformation occurs
-  return { symbol: '', type: '' };
+  // Return original symbol if not a a transform
+  return { symbol, type: 'crypto' };
 }
 
 export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
@@ -95,27 +95,8 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
       }
 
       // Maps some special kraken symbols to common ones.
-      let { symbol, type } = transformSymbol(key);
-      if (!symbol) {
-        symbol = key;
-        type = 'crypto';
-      }
-
-      // if (key.startsWith('Z')) {
-      //   type = 'cash';
-      // }
-
-      // let cleaned: string | null = null;
-      // if (key.startsWith('Z') || key.startsWith('X')) {
-      //   if (key === 'XBT' || key === 'XXBT') {
-      //     cleaned = 'BTC';
-      //   } else if (key === 'XDG' || key == 'XXDG') {
-      //     cleaned = 'DOGE';
-      //   } else {
-      //     cleaned = key.substr(1);
-      //   }
-      // }
-
+      const { symbol, type } = transformSymbol(key);
+      // Create or update Lunch Money Connector balance object
       let balance = updateBalance(balances[symbol], value);
       if (!balance) {
         balance = <CryptoBalance>{
@@ -126,11 +107,10 @@ export const LunchMoneyKrakenConnection: LunchMoneyCryptoConnection<
         };
       } else if (balance.type != type) {
         // Cash types generally start with a Z but the Kraken API returns different symbols
-        // for staking and bonus programs like EUR.M or EUR.HOLD
-        // The typically only come if the user also holds the actual currency (ie: ZEUR)
-        // if we get a Z code for anything let's set the type to cash
-        if (key.startsWith('Z')) {
-          balance.type = 'cash';
+        // for staking and bonus programs like EUR.M or EUR.HOLD.  If any of the symbols
+        // maps to cash treat it as cash
+        if (type === 'cash') {
+          balance.type = type;
         }
       }
 
@@ -178,17 +158,6 @@ export function validateResponse(
   }
 
   return { result: response.data.result, warnings: warnings };
-}
-
-/**
- * Maps some special kraken symbols to common ones.
- */
-export function krakenToCommon(ticker: string): string {
-  const mapping: Record<string, string> = {
-    XBT: 'BTC',
-  };
-
-  return mapping[ticker] ?? ticker;
 }
 
 /**
