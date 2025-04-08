@@ -24,20 +24,12 @@ jobs:
       - name: Install Dependencies
         run: yarn install --immutable
 
-      - name: Test
-        run: yarn test --ci --coverage
-
-      - name: Provide auth
-        uses: DamianReeves/write-file-action@v1.0
-        with:
-          path: ./.yarnrc.yml
-          contents: |
-            npmAuthToken: '${{ secrets.NPM_TOKEN }}'
-          write-mode: append
-
       - name: Build
         run: yarn build
 
+      - name: Test
+        run: yarn test --ci --coverage
+
       - name: Publish
         if: github.ref == 'refs/heads/main'
-        run: yarn npm publish --access public
+        run: npm publish --access public --//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
